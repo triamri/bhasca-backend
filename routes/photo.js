@@ -10,7 +10,6 @@ router.post('/',
   upload.multer.single('image'),
   upload.sendUploadToGCS,
   Photo.create)
-router.put('/:id', Photo.update)
-router.delete('/:id', Photo.destroy)
+router.post('/url', Photo.create)
 
 module.exports = router;

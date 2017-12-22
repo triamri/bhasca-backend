@@ -5,7 +5,7 @@ const axios     = require('axios');
 class ImageToTextController {
   static renderImage(url){
     return new Promise((resolve, reject)=>{
-      let urlRender = `https://vision.googleapis.com/v1/images:annotate?key=${process.env.API_GOOGLE}`
+      let urlRender = `https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDB7xBUE2MEms8Irn4hn7VcwMQA4Wjuv34`
       let data = {
         "requests": [
           {

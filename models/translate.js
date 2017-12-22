@@ -8,10 +8,7 @@ var translateSchema = new Schema({
     type : Schema.Types.ObjectId,
     ref : 'Photo'
   },
-  statusRequest : {
-    type : Schema.Types.ObjectId,
-    ref : 'Status'
-  },
+  statusRequest : String,
   data : String
 })
 

@@ -5,7 +5,6 @@ mongoose.Promise = global.Promise;
 
 var photoSchema = new Schema({
   photo : String,
-  statusFile : String,
   createdAt : {
     type : Date,
     default : Date.now

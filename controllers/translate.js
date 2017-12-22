@@ -6,12 +6,6 @@ const ObjectID = require('mongodb').ObjectID;
 
 class TranslateController {
 
-  static translator(text, bahasa){
-    googleTranslate.translate(text , bahasa, function(err, translation) {
-      if(!err) return translation.translatedText
-      return err
-    });
-  }
 
   static get(req, res) {
     TranslateModel.find()

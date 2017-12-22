@@ -1,7 +1,6 @@
 const express   = require('express');
 const route     = express.Router();
 const axios     = require('axios');
-const translate = require('google-translate-api');
 
 route.post('/', (req, res) => {
   let data = {

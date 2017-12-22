@@ -3,7 +3,8 @@ const router = express.Router();
 const PhotoModel = require('../models/photo')
 const HttpStatus = require('http-status-codes')
 const ObjectID = require('mongodb').ObjectID;
-const upload = require('../helpers/uploadImages')
+const textToImage = require('../controllers/textToImage')
+googleTranslate = require('google-translate')(process.env.API_GOOGLE);
 
 class PhotoController {
   static get(req, res) {
@@ -41,7 +42,7 @@ class PhotoController {
   }
 
   static create(req, res) {
-    console.log(req.file.cloudStoragePublicUrl)
+    let filUpload = req.file.cloudStoragePublicUrl  || req.body.url;
     let { photo, statusFile } = req.body
     let dataPhoto = new PhotoModel({
       photo,
@@ -49,9 +50,16 @@ class PhotoController {
     })
     dataPhoto.save()
       .then(result => {
-        res.status(HttpStatus.OK).json({
-          messages: "Photos Created",
-          data: result
+        textToImage.renderImage(fileUpload)
+        .then(showText =>{
+
+          googleTranslate.translate(showText , 'en', function(err, translation) {
+            let dataHasilTranslate = translation.translateText
+            console.log(translation.translatedText);
+          });
+        })
+        .catch(err =>{
+          console.log('INI ERROR')
         })
 
       })
@@ -60,34 +68,6 @@ class PhotoController {
           messages: "Data Photos Error Server",
           data: err,
           error: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR)
-        })
-      })
-  }
-
-  static update(req, res) {
-    let { name, merk, price, stock, image } = req.body
-    PhotoModel.findByIdAndUpdate(req.params.id, { name, merk, price, stock, image })
-      .then(result => {
-        res.status(HttpStatus.OK).json({
-          messages: "Photo Updated",
-          data: result
-        })
-      })
-      .catch(err => {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-          messages: "Update Photo Error Server",
-          data: err,
-          error: HttpStatus.getStatusText(HttpStatus.INTERNAL_SERVER_ERROR)
-        })
-      })
-  }
-
-  static destroy(req, res) {
-    PhotoModel.findByIdAndRemove(req.params.id)
-      .then(result => {
-        res.status(HttpStatus.OK).json({
-          messages: "Photo Deleted",
-          data: result
         })
       })
   }

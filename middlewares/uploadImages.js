@@ -25,7 +25,6 @@ const sendUploadToGCS = (req, res, next) => {
       contentType: req.file.mimetype
     }
   })
-  console.log(stream)
   stream.on('error', (err) => {
     req.file.cloudStorageError = err
     next(err)

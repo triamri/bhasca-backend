@@ -1,18 +1,21 @@
-var express = require('express');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
+const express = require('express');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const HttpStatus = require('http-status-codes')
+const cors = require('cors')
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+const photo = require('./routes/photo');
+const translate = require('./routes/translate');
+const app = express();
 
-var app = express();
+app.use(cors())
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
-app.use('/', routes);
-app.use('/users', users);
+app.use('/api/photo', photo);
+app.use('/api/translate', translate);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {

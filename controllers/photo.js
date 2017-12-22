@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const PhotoModel = require('../models/photo')
 const HttpStatus = require('http-status-codes')
+const axios = require('axios');
 const ObjectID = require('mongodb').ObjectID;
 const textToImage = require('../controllers/textToImage')
-googleTranslate = require('google-translate')(process.env.API_GOOGLE);
+const TranslateModel = require('../models/translate')
+const googleTranslate = require('google-translate')(process.env.API_GOOGLE);
 
 class PhotoController {
   static get(req, res) {
@@ -42,25 +44,39 @@ class PhotoController {
   }
 
   static create(req, res) {
-    let filUpload = req.file.cloudStoragePublicUrl  || req.body.url;
-    let { photo, statusFile } = req.body
+    let fileUpload = req.body.url || req.file.cloudStoragePublicUrl;
+    console.log(fileUpload)
     let dataPhoto = new PhotoModel({
-      photo,
-      statusFile
+      photo: fileUpload
     })
     dataPhoto.save()
       .then(result => {
+        console.log(result)
         textToImage.renderImage(fileUpload)
-        .then(showText =>{
+          .then(showText => {
+            console.log(showText)
+            googleTranslate.translate(showText, req.body.from, function (err, translation) {
+              console.log('masuk ke translate')
+              let dataHasilTranslate = translation.translatedText
+              let dataTranslate = new TranslateModel({
+                idPhoto: result._id,
+              statusRequest: req.body.from,
+                data: dataHasilTranslate
+              })
+              dataTranslate.save()
+                .then(translateDatabase => {
+                  res.status(HttpStatus.OK).json({
+                    messages: "Data Translator",
+                    data: dataHasilTranslate,
+                    image: fileUpload
+                  })
+                })
 
-          googleTranslate.translate(showText , 'en', function(err, translation) {
-            let dataHasilTranslate = translation.translateText
-            console.log(translation.translatedText);
-          });
-        })
-        .catch(err =>{
-          console.log('INI ERROR')
-        })
+            });
+          })
+          .catch(err => {
+            console.log('INI ERROR')
+          })
 
       })
       .catch(err => {

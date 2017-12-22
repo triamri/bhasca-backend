@@ -3,6 +3,7 @@ const router = express.Router();
 const PhotoModel = require('../models/photo')
 const HttpStatus = require('http-status-codes')
 const ObjectID = require('mongodb').ObjectID;
+const upload = require('../helpers/uploadImages')
 
 class PhotoController {
   static get(req, res) {
@@ -40,6 +41,7 @@ class PhotoController {
   }
 
   static create(req, res) {
+    console.log(req.file.cloudStoragePublicUrl)
     let { photo, statusFile } = req.body
     let dataPhoto = new PhotoModel({
       photo,
@@ -51,6 +53,7 @@ class PhotoController {
           messages: "Photos Created",
           data: result
         })
+
       })
       .catch(err => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({

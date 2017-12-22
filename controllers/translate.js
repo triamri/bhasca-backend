@@ -5,12 +5,20 @@ const HttpStatus = require('http-status-codes')
 const ObjectID = require('mongodb').ObjectID;
 
 class TranslateController {
+
+  static translator(text, bahasa){
+    googleTranslate.translate(text , bahasa, function(err, translation) {
+      if(!err) return translation.translatedText
+      return err
+    });
+  }
+
   static get(req, res) {
     TranslateModel.find()
       .then(result => {
         res.status(HttpStatus.OK).json({
           messages: "Data Translates",
-          data: result
+          data: results
         })
       })
       .catch(err => {
@@ -44,7 +52,6 @@ class TranslateController {
     let dataTranslate = new TranslateModel({
       idPhoto,
       statusRequest,
-      data
     })
     dataTranslate.save()
       .then(result => {
